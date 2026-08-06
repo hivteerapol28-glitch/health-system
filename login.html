@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - ระบบบันทึกข้อมูลสุขภาพ อสม.</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f9;
+            --card-bg: #ffffff;
+            --primary-navy: #1a237e;
+            --primary-blue: #283593;
+            --accent-red: #d32f2f;
+            --text-main: #1c2541;
+            --text-sub: #5c677d;
+            --border-color: #d0d7de;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#d0d7de 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .login-card {
+            background-color: var(--card-bg);
+            padding: 35px 28px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(26, 35, 126, 0.1);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* 📸 ส่วนแสดงรูปโลโก้ */
+        .icon-banner { 
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 18px auto;
+            border-radius: 50%;
+            padding: 5px;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .icon-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        h2 { margin: 0 0 6px 0; color: var(--primary-navy); font-size: 22px; font-weight: 700; }
+        p.subtitle { margin: 0 0 24px 0; color: var(--text-sub); font-size: 13px; }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-navy);
+            margin-bottom: 6px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.2s;
+            background-color: #f8fafc;
+            font-family: inherit;
+        }
+        .form-input:focus {
+            border-color: var(--primary-blue);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(40, 53, 147, 0.1);
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-sub);
+            padding: 0;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 13px;
+            background-color: var(--primary-navy);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.25);
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+        .btn-login:hover {
+            background-color: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        .footer-text {
+            margin-top: 20px;
+            font-size: 11.5px;
+            color: var(--text-sub);
+        }
+        .error-msg {
+            color: var(--accent-red);
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+            background-color: #ffebee;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ffcdd2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="icon-banner">
+        <img src="logo.jpg?v=1" alt="โลโก้ อสม.">
+    </div>
+
+    <h2>ระบบบันทึกข้อมูลสุขภาพ</h2>
+    <p class="subtitle">อาสาสมัครสาธารณสุขประจำหมู่บ้าน (อสม.)</p>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+            <label for="username">ชื่อผู้ใช้งาน / Username</label>
+            <input type="text" id="username" class="form-input" placeholder="ระบุชื่อผู้ใช้งาน" required>
+        </div>
+
+        <div class="form-group">
+            <label for="idCard">เลขประจำตัวประชาชน (13 หลัก)</label>
+            <div class="input-wrapper">
+                <input type="password" id="idCard" class="form-input" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" maxlength="13" inputmode="numeric" required>
+                <button type="button" class="toggle-btn" onclick="togglePassword()">👁️</button>
+            </div>
+        </div>
+
+        <div id="errorMsg" class="error-msg">❌ กรุณากรอกข้อมูลให้ครบถ้วนถูกต้อง</div>
+
+        <button type="submit" class="btn-login">เข้าสู่ระบบ</button>
+    </form>
+
+    <div class="footer-text">
+        ระบบบันทึกและประเมินสถิติสุขภาพชุมชน
+    </div>
+</div>
+
+<script>
+// 👁️ สลับการมองเห็นเลขบัตรประชาชน
+function togglePassword() {
+    const idInput = document.getElementById('idCard');
+    idInput.type = (idInput.type === 'password') ? 'text' : 'password';
+}
+
+// 🔍 ฟังก์ชันคำนวณตรวจสอบความถูกต้องของเลขบัตรประชาชนไทย (Check Digit Modulo 11)
+function checkThaiID(id) {
+    if (id.length !== 13) return false;
+    if (!/^[0-9]+$/.test(id)) return false;
+    if (/^(\d)\1{12}$/.test(id)) return false;
+
+    let sum = 0;
+    for (let i = 0; i < 12; i++) {
+        sum += parseInt(id.charAt(i)) * (13 - i);
+    }
+    
+    let checkDigit = (11 - (sum % 11)) % 10;
+    return checkDigit === parseInt(id.charAt(12));
+}
+
+function handleLogin(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const idCard = document.getElementById('idCard').value.trim();
+    const errorMsg = document.getElementById('errorMsg');
+
+    if (username === '') {
+        errorMsg.style.display = 'block';
+        errorMsg.innerText = '❌ กรุณาระบุชื่อผู้ใช้งาน';
+        return;
+    }
+
+    if (idCard.length !== 13) {
+        errorMsg.style.display = 'block';
+        errorMsg.innerText = '❌ กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก';
+        return;
+    }
+
+    if (checkThaiID(idCard)) {
+        errorMsg.style.display = 'none';
+        localStorage.setItem('currentUser', username);
+        window.location.href = 'index.html';
+    } else {
+        errorMsg.style.display = 'block';
+        errorMsg.innerText = '❌ เลขบัตรประชาชนไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง';
+    }
+}
+</script>
+
+</body>
+</html>
