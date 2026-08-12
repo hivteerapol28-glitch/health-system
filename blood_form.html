@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกความดันโลหิต - อสม.</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f9;
+            --card-bg: #ffffff;
+            --primary-navy: #1a237e;
+            --primary-blue: #283593;
+            --border-color: #d0d7de;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#d0d7de 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .form-card {
+            background-color: var(--card-bg);
+            padding: 30px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(26, 35, 126, 0.1);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+        .icon-header {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        h2 { color: var(--primary-navy); margin-top: 0; margin-bottom: 5px; font-size: 20px; }
+        .subtitle { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+        .form-group { text-align: left; margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--primary-navy); margin-bottom: 6px; }
+        .form-input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            background-color: #f8fafc;
+        }
+        .form-input:focus { border-color: var(--primary-blue); background-color: #ffffff; }
+        
+        /* กล่องสีม่วงสำหรับแสดงค่าครั้งก่อน */
+        .purple-box {
+            background-color: #f3e8ff;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid #d8b4fe;
+            margin-bottom: 18px;
+            font-size: 13px;
+            color: #581c87;
+            text-align: left;
+        }
+        .purple-box-title {
+            font-weight: bold;
+            color: #6b21a8;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background-color: #0066ff;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+        .btn-submit:hover { background-color: #0052cc; }
+        .btn-back {
+            width: 100%;
+            padding: 11px;
+            background-color: transparent;
+            color: var(--primary-navy);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .row-group { display: flex; gap: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <div class="icon-header">🩺</div>
+    <h2>บันทึกความดันโลหิต</h2>
+    <div class="subtitle">กรอกค่าความดันเพื่อประเมินผลเบื้องต้น</div>
+
+    <form id="bpForm" onsubmit="handleSubmit(event)">
+        <!-- เลขบัตรประชาชน -->
+        <div class="form-group">
+            <label for="idCard">เลขบัตรประชาชน (กรอกเพื่อดึงข้อมูลเดิม)</label>
+            <input type="text" id="idCard" class="form-input" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" maxlength="13" oninput="fetchPreviousData(this.value)" required>
+        </div>
+
+        <!-- กล่องสีม่วงแสดงข้อมูลครั้งก่อน -->
+        <div class="purple-box">
+            <div class="purple-box-title">📊 ค่าความดันครั้งก่อน:</div>
+            <div id="prevDate" style="margin-bottom: 3px;">• วันที่ตรวจ: -</div>
+            <div id="prevSysDia" style="margin-bottom: 3px;">• SYS/DIA: - mmHg</div>
+            <div id="prevEval">• ผลประเมิน: -</div>
+        </div>
+
+        <!-- ชื่อผู้รับการตรวจ -->
+        <div class="form-group">
+            <label for="patientName">ชื่อผู้รับการตรวจ / ผู้ป่วย</label>
+            <input type="text" id="patientName" class="form-input" placeholder="ชื่อ-นามสกุล" readonly style="background-color: #eaedf0;">
+        </div>
+
+        <!-- วันที่และเวลาตรวจปัจจุบัน -->
+        <div class="form-group">
+            <label for="checkDate">วันที่และเวลาตรวจ</label>
+            <input type="datetime-local" id="checkDate" class="form-input" required>
+        </div>
+
+        <!-- ค่าความดัน ตัวบน/ตัวล่าง -->
+        <div class="row-group">
+            <div class="form-group" style="flex: 1;">
+                <label for="sys">ตัวบน (SYS) mmHg</label>
+                <input type="number" id="sys" class="form-input" placeholder="เช่น 120" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label for="dia">ตัวล่าง (DIA) mmHg</label>
+                <input type="number" id="dia" class="form-input" placeholder="เช่น 80" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">ประเมินผลและบันทึก</button>
+        <button type="button" class="btn-back" onclick="history.back()">← กลับหน้าหลัก</button>
+    </form>
+</div>
+
+<script>
+    // นำ URL ของ Web App จาก Google Apps Script มาใส่ตรงนี้
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyCp0L4MF2yTmBNGGoV6iVBhlcnTW9lagoOUBJBNNcRn4JzqtSgbV82-aH8uwreI6QI/exec";
+
+    // ตั้งค่าเวลาปัจจุบันให้ช่อง input datetime-local อัตโนมัติเมื่อเปิดหน้าเว็บ
+    window.addEventListener('DOMContentLoaded', () => {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('checkDate').value = now.toISOString().slice(0, 16);
+    });
+
+    // ฟังก์ชันดึงข้อมูลจริงจาก Google Apps Script เมื่อพิมพ์ครบ 13 หลัก
+    async function fetchPreviousData(idCard) {
+        if (idCard.length === 13) {
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "get_previous_bp",
+                        idCard: idCard
+                    })
+                });
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    // แสดงชื่อผู้ป่วยอัตโนมัติ
+                    document.getElementById('patientName').value = result.name || "ไม่พบชื่อในระบบ";
+
+                    // แสดงข้อมูลในกล่องสีม่วงรวมถึงวันที่ตรวจครั้งก่อน
+                    document.getElementById('prevDate').innerHTML = `• วันที่ตรวจ: <strong>${result.lastBp.date}</strong>`;
+                    document.getElementById('prevSysDia').innerHTML = `• SYS/DIA: <strong>${result.lastBp.sys}/${result.lastBp.dia} mmHg</strong>`;
+                    document.getElementById('prevEval').innerHTML = `• ผลประเมิน: <strong>${result.lastBp.evaluation}</strong>`;
+                } else {
+                    document.getElementById('patientName').value = "ไม่พบข้อมูลในระบบ";
+                }
+            } catch (err) {
+                console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", err);
+            }
+        } else {
+            // เคลียร์ค่าทิ้งเมื่อยังพิมพ์ไม่ครบ 13 หลัก
+            document.getElementById('prevDate').innerHTML = `• วันที่ตรวจ: -`;
+            document.getElementById('prevSysDia').innerHTML = `• SYS/DIA: - mmHg`;
+            document.getElementById('prevEval').innerHTML = `• ผลประเมิน: -`;
+            document.getElementById('patientName').value = '';
+        }
+    }
+
+    // ฟังก์ชันส่งข้อมูลบันทึกความดันใหม่ไปที่ Google Apps Script
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        const payload = {
+            action: "save_bp",
+            idCard: document.getElementById('idCard').value,
+            checkDate: document.getElementById('checkDate').value,
+            sys: document.getElementById('sys').value,
+            dia: document.getElementById('dia').value
+        };
+
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            if (result.status === "success") {
+                alert("บันทึกข้อมูลสำเร็จ!");
+                location.reload(); // รีเฟรชหน้าเว็บเพื่อเคลียร์ฟอร์ม
+            } else {
+                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+            }
+        } catch (err) {
+            console.error("เกิดข้อผิดพลาด:", err);
+            alert("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+        }
+    }
+</script>
+
+</body>
+</html>

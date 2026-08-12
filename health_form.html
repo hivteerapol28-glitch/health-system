@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกแบบสำรวจข้อมูลสุขภาพ</title>
+    <style>
+        :root {
+            --bg-color: #f7f4fc;
+            --card-bg: #ffffff;
+            --primary-pastel: #b39ddb;
+            --primary-dark: #7e57c2;
+            --text-main: #4a3b60;
+            --text-sub: #8c7b9e;
+            --border-color: #e1d7f2;
+        }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .container { background-color: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(126, 87, 194, 0.08); border: 1px solid var(--border-color); width: 100%; max-width: 500px; text-align: center; }
+        .icon-banner { font-size: 50px; margin-bottom: 10px; }
+        h2 { margin: 0 0 10px 0; color: var(--text-main); font-size: 24px; }
+        p.subtitle { margin: 0 0 25px 0; color: var(--text-sub); font-size: 14px; }
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .input-group { margin-bottom: 15px; text-align: left; width: 100%; }
+        label { display: block; margin-bottom: 6px; color: var(--text-main); font-weight: 600; font-size: 14px; }
+        input, select { width: 100%; padding: 11px 15px; border: 1.5px solid var(--border-color); border-radius: 10px; box-sizing: border-box; font-size: 15px; background-color: #faf9fe; color: var(--text-main); }
+        button { width: 100%; padding: 13px; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; margin-top: 10px; }
+        .btn-submit { background-color: #27ae60; }
+        .btn-outline { background-color: transparent; color: var(--text-sub); border: 1px solid var(--border-color); }
+        fieldset { border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: left; }
+        legend { color: var(--primary-dark); font-weight: bold; font-size: 14px; padding: 0 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="icon-banner">📝</div>
+    <h2>แบบสำรวจข้อมูลสุขภาพ</h2>
+    <p class="subtitle">กรอกประวัติส่วนตัวและข้อมูลสุขภาพชุมชน</p>
+
+    <!-- ช่องกรอกเลขบัตรประชาชน -->
+    <div class="input-group">
+        <label>เลขบัตรประชาชน (13 หลัก)</label>
+        <input type="text" id="idCard" placeholder="กรอกเลขบัตรประชาชน" maxlength="13">
+    </div>
+
+    <div class="form-row">
+        <div class="input-group" style="flex: 0.4;">
+            <label>คำนำหน้า</label>
+            <select id="title">
+                <option>นาย</option>
+                <option>นาง</option>
+                <option>นางสาว</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>ชื่อ</label>
+            <input type="text" id="firstname" placeholder="ชื่อจริง">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="input-group">
+            <label>นามสกุล</label>
+            <input type="text" id="lastname" placeholder="นามสกุล">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="input-group">
+            <label>เพศ</label>
+            <select id="gender">
+                <option>ชาย</option>
+                <option>หญิง</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>อายุ (ปี)</label>
+            <input type="number" id="age">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="input-group">
+            <label>อาชีพ</label>
+            <input type="text" id="occupation">
+        </div>
+        <div class="input-group">
+            <label>สถานะ</label>
+            <select id="status">
+                <option>โสด</option>
+                <option>สมรส</option>
+                <option>หม้าย / หย่าร้าง</option>
+            </select>
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>ข้อมูลที่อยู่ปัจจุบัน</legend>
+        <div class="form-row">
+            <div class="input-group"><label>บ้านเลขที่</label><input type="text" id="address_no"></div>
+            <div class="input-group"><label>ตำบล</label><input type="text" id="subdistrict"></div>
+        </div>
+        <div class="form-row">
+            <div class="input-group"><label>อำเภอ</label><input type="text" id="district"></div>
+            <div class="input-group"><label>จังหวัด</label><input type="text" id="province"></div>
+        </div>
+    </fieldset>
+
+    <div class="form-row">
+        <div class="input-group"><label>ส่วนสูง (ซม.)</label><input type="number" id="height"></div>
+        <div class="input-group"><label>น้ำหนัก (กก.)</label><input type="number" id="weight"></div>
+    </div>
+
+    <button class="btn-submit" onclick="saveData()">บันทึกข้อมูลสุขภาพ</button>
+    <button class="btn-outline" onclick="window.location.href='index.html';">&larr; กลับหน้าหลัก</button>
+</div>
+
+<script>
+function saveData() {
+    // รวบรวมข้อมูลจากฟอร์ม
+    const payload = {
+        values: [
+            document.getElementById('idCard').value,
+            document.getElementById('title').value,
+            document.getElementById('firstname').value,
+            document.getElementById('lastname').value,
+            document.getElementById('gender').value,
+            document.getElementById('age').value,
+            document.getElementById('occupation').value,
+            document.getElementById('status').value,
+            document.getElementById('address_no').value,
+            document.getElementById('subdistrict').value,
+            document.getElementById('district').value,
+            document.getElementById('province').value,
+            document.getElementById('height').value,
+            document.getElementById('weight').value
+        ]
+    };
+
+    // ตรวจสอบข้อมูล
+    if(payload.values[0].length !== 13) { alert('กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก'); return; }
+
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbxDHdN6Xr5mdpwwxszw4VTkLdQ-NKGFmx79eaHc0vhTjBVA3EQvk3oZ84vvabsf7X4P/exec"; 
+
+    fetch(webAppUrl, {
+        method: "POST",
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.result === "success") {
+            alert('บันทึกข้อมูลสำเร็จ!');
+            location.reload();
+        } else {
+            alert('เกิดข้อผิดพลาด: ' + data.error);
+        }
+    })
+    .catch(err => alert('ไม่สามารถเชื่อมต่อระบบได้'));
+}
+</script>
+</body>
+</html>

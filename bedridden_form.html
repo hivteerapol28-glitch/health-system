@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกการประเมินผู้ป่วยติดเตียง</title>
+    <style>
+        :root {
+            --bg-color: #f7f4fc;
+            --card-bg: #ffffff;
+            --primary-pastel: #b39ddb;
+            --primary-dark: #7e57c2;
+            --text-main: #4a3b60;
+            --text-sub: #8c7b9e;
+            --border-color: #e1d7f2;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#e8e0f5 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(126, 87, 194, 0.08);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .icon-banner { font-size: 50px; margin-bottom: 10px; }
+        h2 { margin: 0 0 10px 0; color: var(--text-main); font-size: 24px; }
+        p.subtitle { margin: 0 0 25px 0; color: var(--text-sub); font-size: 14px; }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-row .input-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 6px; color: var(--text-main); font-weight: 600; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 11px 15px; border: 1.5px solid var(--border-color); border-radius: 10px; box-sizing: border-box; font-size: 15px; background-color: #faf9fe; color: var(--text-main); font-family: inherit; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-pastel); background-color: #ffffff; }
+        
+        button { width: 100%; padding: 13px; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; margin-top: 10px; }
+        .btn-submit { background-color: #f39c12; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.2); }
+        .btn-submit:hover { background-color: #d68910; }
+        .btn-fetch { background-color: #7e57c2; margin-top: 0; width: 120px; font-size: 14px; padding: 0; }
+        .btn-fetch:hover { background-color: #5e35b1; }
+        .btn-outline { background-color: transparent; color: var(--text-sub); border: 1px solid var(--border-color); margin-top: 12px; }
+        .btn-outline:hover { background-color: #ede7f6; color: var(--primary-dark); }
+        
+        fieldset {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        legend {
+            color: var(--primary-dark);
+            font-weight: bold;
+            font-size: 14px;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="icon-banner">🛏️</div>
+    <h2>แบบประเมินผู้ป่วยติดเตียง</h2>
+    <p class="subtitle">บันทึกข้อมูลและประเมินภาวะพึ่งพิงของผู้ป่วย</p>
+
+    <!-- ช่องกรอกเลขบัตรประชาชนเพื่อดึงข้อมูล -->
+    <div class="input-group">
+        <label>เลขบัตรประจำตัวประชาชน (สำหรับดึงข้อมูล)</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="idCard" placeholder="กรอกเลข 13 หลัก" maxlength="13">
+            <button class="btn-fetch" onclick="fetchBedriddenData()">ดึงข้อมูล</button>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="input-group" style="flex: 0.4;">
+            <label>คำนำหน้า</label>
+            <select id="title">
+                <option>นาย</option>
+                <option>นาง</option>
+                <option>นางสาว</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>ชื่อผู้ป่วย</label>
+            <input type="text" id="firstname" placeholder="กรอกชื่อจริง">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="input-group">
+            <label>นามสกุล</label>
+            <input type="text" id="lastname" placeholder="กรอกนามสกุล">
+        </div>
+        <div class="input-group" style="flex: 0.5;">
+            <label>อายุ (ปี)</label>
+            <input type="number" id="age" placeholder="เช่น 70">
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>ผลการประเมินภาวะพึ่งพิง</legend>
+        <div class="input-group">
+            <label>ระดับการช่วยเหลือตนเอง (ADL)</label>
+            <select id="adl_level">
+                <option>กลุ่มติดบ้าน (พึ่งพิงปานกลาง)</option>
+                <option>กลุ่มติดเตียง (พึ่งพิงรุนแรง)</option>
+            </select>
+        </div>
+        
+        <div class="form-row">
+            <div class="input-group">
+                <label>แผลกดทับ</label>
+                <select id="bedsores">
+                    <option>ไม่มีแผลกดทับ</option>
+                    <option>มีแผลกดทับ</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>การให้อาหาร</label>
+                <select id="feeding">
+                    <option>ทานเองได้</option>
+                    <option>ต้องช่วยป้อน</option>
+                    <option>สายยาง (NG Tube)</option>
+                </select>
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="input-group">
+        <label>ชื่อผู้ดูแลหลัก (Caregiver)</label>
+        <input type="text" id="caregiver" placeholder="ระบุชื่อผู้ดูแล หรือ ความเกี่ยวข้อง">
+    </div>
+
+    <div class="input-group">
+        <label>รายละเอียดเพิ่มเติม / ความต้องการ</label>
+        <textarea id="note" rows="2" placeholder="เช่น ต้องการผ้าอ้อมผู้ใหญ่, ทำแผลกดทับ..."></textarea>
+    </div>
+
+    <button class="btn-submit" onclick="saveBedriddenData()">บันทึกข้อมูลผู้ป่วยติดเตียง</button>
+    <button class="btn-outline" onclick="window.location.href='index.html';">&larr; กลับหน้าหลักระบบ</button>
+</div>
+
+<script>
+const webAppUrl = "https://script.google.com/macros/s/AKfycbxdTUArkVE9qRayPuq2N9dl1kuUiaJxNmEy0BWV-ekNjPtDFhA0kHrqqh98RLEGwnSZ/exec";
+
+// 🔍 ฟังก์ชันดึงข้อมูล (ดึงเฉพาะ ชื่อ, นามสกุล และอายุ ตามที่ต้องการ)
+function fetchBedriddenData() {
+    const idCard = document.getElementById('idCard').value.trim();
+    if (idCard.length !== 13) {
+        alert('กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก');
+        return;
+    }
+
+    fetch(`${webAppUrl}?action=get_bedridden&id=${idCard}`)
+    .then(res => res.json())
+    .then(resData => {
+        if (resData.found && resData.data) {
+            const d = resData.data;
+            // ดึงมาแสดงเฉพาะ ชื่อ, นามสกุล และอายุ
+            document.getElementById('firstname').value = d.firstname || "";
+            document.getElementById('lastname').value = d.lastname || "";
+            document.getElementById('age').value = d.age || "";
+            alert('ดึงข้อมูล ชื่อ นามสกุล และอายุ เรียบร้อย!');
+        } else {
+            alert('ไม่พบข้อมูลประวัติผู้ป่วยติดเตียงของเลขบัตรนี้ในระบบ');
+        }
+    })
+    .catch(err => {
+        console.error("Error fetching data:", err);
+        alert('เกิดข้อผิดพลาดในการเชื่อมต่อเพื่อดึงข้อมูล');
+    });
+}
+
+function saveToLocalStorage(name, lastname, adl_level, caregiver) {
+    let bedriddenRecords = JSON.parse(localStorage.getItem('bedriddenRecords') || '[]');
+    bedriddenRecords.push({
+        name: name + ' ' + lastname,
+        adl_level: adl_level,
+        caregiver: caregiver,
+        date: new Date().toISOString()
+    });
+    localStorage.setItem('bedriddenRecords', JSON.stringify(bedriddenRecords));
+}
+
+function saveBedriddenData() {
+    const idCard = document.getElementById('idCard').value.trim();
+    const title = document.getElementById('title').value;
+    const name = document.getElementById('firstname').value.trim();
+    const lastname = document.getElementById('lastname').value.trim();
+    const age = document.getElementById('age').value;
+    const adl_level = document.getElementById('adl_level').value;
+    const bedsores = document.getElementById('bedsores').value;
+    const feeding = document.getElementById('feeding').value;
+    const caregiver = document.getElementById('caregiver').value;
+    const note = document.getElementById('note').value;
+
+    if(!idCard || idCard.length !== 13) {
+        alert('กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก');
+        return;
+    }
+
+    if(!name || !lastname) {
+        alert('กรุณากรอกชื่อและนามสกุลผู้ป่วยด้วยครับ');
+        return;
+    }
+
+    // 🎯 บันทึกลง LocalStorage ของเครื่องทันที
+    saveToLocalStorage(name, lastname, adl_level, caregiver);
+
+    // ปรับโครงสร้างข้อมูลส่งไปบันทึก
+    const payload = {
+        sheetName: "bedridden",
+        values: [idCard, title, name, lastname, age, adl_level, bedsores, feeding, caregiver, note]
+    };
+
+    fetch(webAppUrl, {
+        method: "POST",
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.result === "success") {
+            alert('บันทึกข้อมูลผู้ป่วย ' + name + ' เรียบร้อยแล้ว!');
+            // เคลียร์ฟอร์ม
+            document.getElementById('idCard').value = '';
+            document.getElementById('firstname').value = '';
+            document.getElementById('lastname').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('caregiver').value = '';
+            document.getElementById('note').value = '';
+        } else {
+            alert('เกิดข้อผิดพลาดจาก Sheets: ' + data.error);
+        }
+    })
+    .catch(err => {
+        console.error("ส่งข้อมูลล้มเหลว:", err);
+        alert('บันทึกข้อมูลลงในเครื่องเรียบร้อยแล้ว!');
+        document.getElementById('idCard').value = '';
+        document.getElementById('firstname').value = '';
+        document.getElementById('lastname').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('caregiver').value = '';
+        document.getElementById('note').value = '';
+    });
+}
+</script>
+</body>
+</html>
