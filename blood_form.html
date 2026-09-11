@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บันทึกความดันโลหิต - อสม.</title>
+    <title>บันทึกความดันโลหิต</title>
     <style>
         :root {
-            --bg-color: #f0f4f9;
+            --bg-color: #f7f4fc;
             --card-bg: #ffffff;
-            --primary-navy: #1a237e;
-            --primary-blue: #283593;
-            --border-color: #d0d7de;
+            --primary-pastel: #b39ddb;
+            --primary-dark: #7e57c2;
+            --text-main: #4a3b60;
+            --text-sub: #8c7b9e;
+            --border-color: #e1d7f2;
         }
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
             background-color: var(--bg-color);
-            background-image: radial-gradient(#d0d7de 1px, transparent 1px);
+            background-image: radial-gradient(#e8e0f5 1px, transparent 1px);
             background-size: 20px 20px;
             display: flex;
             justify-content: center;
@@ -25,216 +27,198 @@
             padding: 20px;
             box-sizing: border-box;
         }
-        .form-card {
+        .container {
             background-color: var(--card-bg);
-            padding: 30px 25px;
+            padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(26, 35, 126, 0.1);
+            box-shadow: 0 10px 30px rgba(126, 87, 194, 0.08);
             border: 1px solid var(--border-color);
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             text-align: center;
         }
-        .icon-header {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-        h2 { color: var(--primary-navy); margin-top: 0; margin-bottom: 5px; font-size: 20px; }
-        .subtitle { font-size: 13px; color: #64748b; margin-bottom: 20px; }
-        .form-group { text-align: left; margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--primary-navy); margin-bottom: 6px; }
-        .form-input {
-            width: 100%;
-            padding: 11px 14px;
-            border: 1.5px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 14px;
-            box-sizing: border-box;
-            outline: none;
-            background-color: #f8fafc;
-        }
-        .form-input:focus { border-color: var(--primary-blue); background-color: #ffffff; }
+        .icon-banner { font-size: 50px; margin-bottom: 10px; }
+        h2 { margin: 0 0 10px 0; color: var(--text-main); font-size: 24px; }
+        p.subtitle { margin: 0 0 25px 0; color: var(--text-sub); font-size: 14px; }
         
-        /* กล่องสีม่วงสำหรับแสดงค่าครั้งก่อน */
-        .purple-box {
-            background-color: #f3e8ff;
-            padding: 12px 15px;
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 6px; color: var(--text-main); font-weight: 600; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 11px 15px; border: 1.5px solid var(--border-color); border-radius: 10px; box-sizing: border-box; font-size: 15px; background-color: #faf9fe; color: var(--text-main); font-family: inherit; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-pastel); background-color: #ffffff; }
+        
+        .bp-card {
+            background: #f3e9ff;
+            border: 1px solid #d1b3ff;
             border-radius: 12px;
-            border: 1px solid #d8b4fe;
-            margin-bottom: 18px;
-            font-size: 13px;
-            color: #581c87;
+            padding: 15px;
+            margin-bottom: 20px;
             text-align: left;
-        }
-        .purple-box-title {
-            font-weight: bold;
-            color: #6b21a8;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 13px;
-            background-color: #0066ff;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);
-            transition: 0.2s;
-            margin-top: 10px;
-        }
-        .btn-submit:hover { background-color: #0052cc; }
-        .btn-back {
-            width: 100%;
-            padding: 11px;
-            background-color: transparent;
-            color: var(--primary-navy);
-            border: 1.5px solid var(--border-color);
-            border-radius: 12px;
             font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 8px;
-            text-align: center;
+            color: var(--text-main);
         }
-        .row-group { display: flex; gap: 10px; }
+        .bp-card b { color: var(--primary-dark); }
+
+        button { width: 100%; padding: 13px; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; margin-top: 10px; }
+        .btn-submit { background-color: #2b7a78; box-shadow: 0 4px 12px rgba(43, 122, 120, 0.2); }
+        .btn-submit:hover { background-color: #1c4f4e; }
+        .btn-fetch { background-color: #7e57c2; margin-top: 0; width: 120px; font-size: 14px; padding: 0; }
+        .btn-fetch:hover { background-color: #5e35b1; }
+        .btn-outline { background-color: transparent; color: var(--text-sub); border: 1px solid var(--border-color); margin-top: 12px; }
+        .btn-outline:hover { background-color: #ede7f6; color: var(--primary-dark); }
+        
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .form-row .input-group { flex: 1; margin-bottom: 0; }
     </style>
 </head>
 <body>
 
-<div class="form-card">
-    <div class="icon-header">🩺</div>
+<div class="container">
+    <div class="icon-banner">🩺</div>
     <h2>บันทึกความดันโลหิต</h2>
-    <div class="subtitle">กรอกค่าความดันเพื่อประเมินผลเบื้องต้น</div>
+    <p class="subtitle">กรอกค่าความดันเพื่อประเมินผลเบื้องต้น</p>
 
-    <form id="bpForm" onsubmit="handleSubmit(event)">
-        <!-- เลขบัตรประชาชน -->
-        <div class="form-group">
-            <label for="idCard">เลขบัตรประชาชน (กรอกเพื่อดึงข้อมูลเดิม)</label>
-            <input type="text" id="idCard" class="form-input" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" maxlength="13" oninput="fetchPreviousData(this.value)" required>
+    <div class="input-group">
+        <label>เลขบัตรประจำตัวประชาชน (กรอกเพื่อดึงข้อมูล)</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="idCard" placeholder="กรอกเลข 13 หลัก" maxlength="13">
+            <button class="btn-fetch" onclick="fetchBloodData()">ดึงข้อมูล</button>
         </div>
+    </div>
 
-        <!-- กล่องสีม่วงแสดงข้อมูลครั้งก่อน -->
-        <div class="purple-box">
-            <div class="purple-box-title">📊 ค่าความดันครั้งก่อน:</div>
-            <div id="prevDate" style="margin-bottom: 3px;">• วันที่ตรวจ: -</div>
-            <div id="prevSysDia" style="margin-bottom: 3px;">• SYS/DIA: - mmHg</div>
-            <div id="prevEval">• ผลประเมิน: -</div>
+    <div class="bp-card">
+        <b>📊 ค่าความดันครั้งก่อน:</b><br>
+        • วันที่ตรวจ: <span id="prev-date">-</span><br>
+        • SYS/DIA: <span id="prev-sys">-</span>/<span id="prev-dia">-</span> mmHg<br>
+        • ผลประเมิน: <span id="prev-eval">-</span>
+    </div>
+
+    <div class="input-group">
+        <label>ชื่อผู้รับการตรวจ / ผู้ป่วย</label>
+        <input type="text" id="patientName" placeholder="พิมพ์ชื่อ-นามสกุล หรือกดปุ่มดึงข้อมูล">
+    </div>
+
+    <div class="input-group">
+        <label>วันที่และเวลาตรวจ</label>
+        <input type="datetime-local" id="checkDate">
+    </div>
+
+    <div class="form-row">
+        <div class="input-group">
+            <label>ตัวบน (SYS) mmHg</label>
+            <input type="number" id="sys" placeholder="เช่น 120">
         </div>
-
-        <!-- ชื่อผู้รับการตรวจ -->
-        <div class="form-group">
-            <label for="patientName">ชื่อผู้รับการตรวจ / ผู้ป่วย</label>
-            <input type="text" id="patientName" class="form-input" placeholder="ชื่อ-นามสกุล" readonly style="background-color: #eaedf0;">
+        <div class="input-group">
+            <label>ตัวล่าง (DIA) mmHg</label>
+            <input type="number" id="dia" placeholder="เช่น 80">
         </div>
+    </div>
 
-        <!-- วันที่และเวลาตรวจปัจจุบัน -->
-        <div class="form-group">
-            <label for="checkDate">วันที่และเวลาตรวจ</label>
-            <input type="datetime-local" id="checkDate" class="form-input" required>
-        </div>
-
-        <!-- ค่าความดัน ตัวบน/ตัวล่าง -->
-        <div class="row-group">
-            <div class="form-group" style="flex: 1;">
-                <label for="sys">ตัวบน (SYS) mmHg</label>
-                <input type="number" id="sys" class="form-input" placeholder="เช่น 120" required>
-            </div>
-            <div class="form-group" style="flex: 1;">
-                <label for="dia">ตัวล่าง (DIA) mmHg</label>
-                <input type="number" id="dia" class="form-input" placeholder="เช่น 80" required>
-            </div>
-        </div>
-
-        <button type="submit" class="btn-submit">ประเมินผลและบันทึก</button>
-        <button type="button" class="btn-back" onclick="history.back()">← กลับหน้าหลัก</button>
-    </form>
+    <button class="btn-submit" onclick="saveBloodData()">ประเมินผลและบันทึก</button>
+    <button class="btn-outline" onclick="window.location.href='index.html';">&larr; กลับหน้าหลัก</button>
 </div>
 
 <script>
-    // นำ URL ของ Web App จาก Google Apps Script มาใส่ตรงนี้
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyCp0L4MF2yTmBNGGoV6iVBhlcnTW9lagoOUBJBNNcRn4JzqtSgbV82-aH8uwreI6QI/exec";
+// ใช้ลิงก์ Web App ตัวเดียวกันกับหน้าติดเตียงของคุณได้เลย
+const webAppUrl = "https://script.google.com/macros/s/AKfycbzsF0mB4Kq3MyfWtm3vLz33QUEzLRkfzmjJVqlqmBiWRQNbtTy-ygg9uTD6_Bp9g7s/exec";
 
-    // ตั้งค่าเวลาปัจจุบันให้ช่อง input datetime-local อัตโนมัติเมื่อเปิดหน้าเว็บ
-    window.addEventListener('DOMContentLoaded', () => {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('checkDate').value = now.toISOString().slice(0, 16);
-    });
+// กำหนดค่าวันที่ปัจจุบันในช่อง input ตอนเปิดหน้าเว็บ
+window.onload = function() {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('checkDate').value = now.toISOString().slice(0, 16);
+};
 
-    // ฟังก์ชันดึงข้อมูลจริงจาก Google Apps Script เมื่อพิมพ์ครบ 13 หลัก
-    async function fetchPreviousData(idCard) {
-        if (idCard.length === 13) {
-            try {
-                const response = await fetch(WEB_APP_URL, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        action: "get_previous_bp",
-                        idCard: idCard
-                    })
-                });
-                const result = await response.json();
+// 🔍 ฟังก์ชันดึงข้อมูลชื่อและประวัติความดันเดิม
+function fetchBloodData() {
+    const idCard = document.getElementById('idCard').value.trim();
+    if (idCard.length !== 13) {
+        alert('กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก');
+        return;
+    }
 
-                if (result.status === "success") {
-                    // แสดงชื่อผู้ป่วยอัตโนมัติ
-                    document.getElementById('patientName').value = result.name || "ไม่พบชื่อในระบบ";
-
-                    // แสดงข้อมูลในกล่องสีม่วงรวมถึงวันที่ตรวจครั้งก่อน
-                    document.getElementById('prevDate').innerHTML = `• วันที่ตรวจ: <strong>${result.lastBp.date}</strong>`;
-                    document.getElementById('prevSysDia').innerHTML = `• SYS/DIA: <strong>${result.lastBp.sys}/${result.lastBp.dia} mmHg</strong>`;
-                    document.getElementById('prevEval').innerHTML = `• ผลประเมิน: <strong>${result.lastBp.evaluation}</strong>`;
-                } else {
-                    document.getElementById('patientName').value = "ไม่พบข้อมูลในระบบ";
-                }
-            } catch (err) {
-                console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", err);
+    fetch(`${webAppUrl}?action=get_previous_bp&idCard=${idCard}`)
+    .then(res => res.json())
+    .then(resData => {
+        if (resData.status === "success") {
+            // แสดงชื่อ
+            document.getElementById('patientName').value = resData.name || "";
+            
+            // แสดงประวัติความดันครั้งก่อน
+            if (resData.lastBp) {
+                document.getElementById('prev-date').innerText = resData.lastBp.date || "-";
+                document.getElementById('prev-sys').innerText = resData.lastBp.sys || "-";
+                document.getElementById('prev-dia').innerText = resData.lastBp.dia || "-";
+                document.getElementById('prev-eval').innerText = resData.lastBp.evaluation || "-";
             }
+            alert('ดึงข้อมูลสำเร็จ!');
         } else {
-            // เคลียร์ค่าทิ้งเมื่อยังพิมพ์ไม่ครบ 13 หลัก
-            document.getElementById('prevDate').innerHTML = `• วันที่ตรวจ: -`;
-            document.getElementById('prevSysDia').innerHTML = `• SYS/DIA: - mmHg`;
-            document.getElementById('prevEval').innerHTML = `• ผลประเมิน: -`;
+            alert('ไม่พบข้อมูลในระบบ');
+        }
+    })
+    .catch(err => {
+        console.error("Error fetching data:", err);
+        alert('เกิดข้อผิดพลาดในการเชื่อมต่อเพื่อดึงข้อมูล');
+    });
+}
+
+// 💾 ฟังก์ชันบันทึกข้อมูลความดันใหม่
+function saveBloodData() {
+    const idCard = document.getElementById('idCard').value.trim();
+    const patientName = document.getElementById('patientName').value.trim();
+    const checkDate = document.getElementById('checkDate').value;
+    const sys = document.getElementById('sys').value;
+    const dia = document.getElementById('dia').value;
+
+    if (!idCard || idCard.length !== 13) {
+        alert('กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก');
+        return;
+    }
+
+    if (!patientName) {
+        alert('กรุณากรอกหรือดึงข้อมูลชื่อผู้ป่วยก่อน');
+        return;
+    }
+
+    if (!sys || !dia) {
+        alert('กรุณากรอกค่าความดันตัวบนและตัวล่างให้ครบถ้วน');
+        return;
+    }
+
+    const payload = {
+        action: "save_bp",
+        idCard: idCard,
+        patientName: patientName,
+        checkDate: checkDate,
+        sys: sys,
+        dia: dia
+    };
+
+    fetch(webAppUrl, {
+        method: "POST",
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert('บันทึกข้อมูลความดันเรียบร้อยแล้ว!');
+            // เคลียร์ฟอร์ม
+            document.getElementById('idCard').value = '';
             document.getElementById('patientName').value = '';
+            document.getElementById('sys').value = '';
+            document.getElementById('dia').value = '';
+            document.getElementById('prev-date').innerText = '-';
+            document.getElementById('prev-sys').innerText = '-';
+            document.getElementById('prev-dia').innerText = '-';
+            document.getElementById('prev-eval').innerText = '-';
+        } else {
+            alert('เกิดข้อผิดพลาด: ' + data.message);
         }
-    }
-
-    // ฟังก์ชันส่งข้อมูลบันทึกความดันใหม่ไปที่ Google Apps Script
-    async function handleSubmit(e) {
-        e.preventDefault();
-
-        const payload = {
-            action: "save_bp",
-            idCard: document.getElementById('idCard').value,
-            checkDate: document.getElementById('checkDate').value,
-            sys: document.getElementById('sys').value,
-            dia: document.getElementById('dia').value
-        };
-
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: "POST",
-                body: JSON.stringify(payload)
-            });
-            const result = await response.json();
-
-            if (result.status === "success") {
-                alert("บันทึกข้อมูลสำเร็จ!");
-                location.reload(); // รีเฟรชหน้าเว็บเพื่อเคลียร์ฟอร์ม
-            } else {
-                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
-            }
-        } catch (err) {
-            console.error("เกิดข้อผิดพลาด:", err);
-            alert("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
-        }
-    }
+    })
+    .catch(err => {
+        console.error("ส่งข้อมูลล้มเหลว:", err);
+        alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
+    });
+}
 </script>
-
 </body>
 </html>
