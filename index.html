@@ -275,7 +275,6 @@
         .popup-title { color: var(--sheet-green); font-size: 19px; font-weight: 700; margin-bottom: 5px; }
         .popup-desc { font-size: 12px; color: var(--text-sub); margin-bottom: 15px; }
         
-        /* สไตล์ช่องกรอกรหัสและปุ่มเลือกทั้ง 2 แบบ */
         .officer-input-group { width: 100%; margin-bottom: 14px; text-align: left; }
         .officer-input-group label { display: block; font-size: 11.5px; color: var(--primary-navy); font-weight: 600; margin-bottom: 5px; }
         .officer-input {
@@ -310,7 +309,7 @@
             <div class="recent-header">
                 <span>🕒 ประวัติการบันทึกล่าสุด</span>
                 <div class="header-actions">
-                    <button onclick="loadRecentActivities()" class="btn-refresh">🔄 อัปเดต</button>
+                    <button onclick="loadStatsAndActivities()" class="btn-refresh">🔄 อัปเดต</button>
                     <button onclick="resetHistory()" class="btn-reset-history">🗑️ รีเซ็ต</button>
                 </div>
             </div>
@@ -381,13 +380,13 @@
                     <div class="menu-icon">🛏️</div>
                     <div class="menu-text">
                         <h3>บันทึกแบบประเมินผู้ป่วยติดเตียง</h3>
-                        <p>บันทึกระดับ ADL, แผลกดทับ และข้อมูลผู้ดูแล</p>
+                        <p>บันทึกระดับ ADL,แผลกดทับ และข้อมูลผู้ดูแล</p>
                     </div>
                 </div>
                 <div class="arrow">&rarr;</div>
             </a>
 
-            <!-- เมนูเจ้าหน้าที่ (คลิกแล้วเปิด Pop-up ให้เลือก 2 ตัวเลือก) -->
+            <!-- เมนูเจ้าหน้าที่ -->
             <div class="menu-card officer-option" onclick="openPopup()">
                 <div class="menu-info">
                     <div class="menu-icon">📊</div>
@@ -432,8 +431,8 @@
 
 <script>
 const googleSheetURL = "https://docs.google.com/spreadsheets/d/1bBGDUlBAZjXRSjPJPZrxcJpTxP07RRv9cNoDCK4PYBE/edit?gid=0#gid=0";
-const adminDashboardURL = "admin_dashboard.html"; // เปลี่ยนเป็นชื่อไฟล์หน้าเว็บแดชบอร์ดของคุณ
-const officerAuthList = ['1234', '1234567890123', '1100223344556']; // กำหนดรหัสผ่านเจ้าหน้าที่
+const adminDashboardURL = "admin_dashboard.html"; 
+const officerAuthList = ['1234', '1234567890123', '1100223344556']; 
 
 window.onload = function() {
     const currentUser = localStorage.getItem('currentUser');
@@ -443,8 +442,7 @@ window.onload = function() {
     }
     document.getElementById('displayUsername').innerText = currentUser;
     checkMonthlyReset();
-    loadStats();
-    loadRecentActivities();
+    loadStatsAndActivities();
 };
 
 function checkMonthlyReset() {
@@ -460,48 +458,85 @@ function checkMonthlyReset() {
     localStorage.setItem('lastActiveMonth', currentMonthKey);
 }
 
-function loadStats() {
+// ฟังก์ชันดึงสถิติตัวเลขจาก Google Sheets ผ่าน Apps Script Web App
+function loadStatsAndActivities() {
+    const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+    const now = new Date();
+    document.getElementById('currentMonthText').innerText = `เดือน ${thaiMonths[now.getMonth()]} ${now.getFullYear() + 543}`;
+
+    // ใส่ URL ของ Google Apps Script ที่คุณใช้งานอยู่
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbzsF0mB4Kq3MyfWtm3vLz33QUEzLRkfzmjJVqlqmBiWRQNbtTy-ygg9uTD6_Bp9g7s/exec"; 
+
+    if (webAppUrl) {
+        fetch(webAppUrl + "?action=get_stats")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    document.getElementById('statHealth').innerText = data.stats.health || 0;
+                    document.getElementById('statBlood').innerText = data.stats.blood || 0;
+                    document.getElementById('statBedridden').innerText = data.stats.bedridden || 0;
+                    
+                    // หากต้องการแสดงประวัติล่าสุดจาก LocalStorage เสริม
+                    renderLocalStorageActivities();
+                }
+            })
+            .catch(err => {
+                console.log("Using LocalStorage fallback due to fetch error:", err);
+                loadFromLocalStorage();
+            });
+    } else {
+        loadFromLocalStorage();
+    }
+}
+
+function renderLocalStorageActivities() {
     const bloodRecords = JSON.parse(localStorage.getItem('bloodRecords') || '[]');
     const healthRecords = JSON.parse(localStorage.getItem('healthRecords') || '[]');
     const bedriddenRecords = JSON.parse(localStorage.getItem('bedriddenRecords') || '[]');
 
-    document.getElementById('statBlood').innerText = bloodRecords.length || 0;
-    document.getElementById('statHealth').innerText = healthRecords.length || 0;
-    document.getElementById('statBedridden').innerText = bedriddenRecords.length || 0;
-
-    const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-    const now = new Date();
-    document.getElementById('currentMonthText').innerText = `เดือน ${thaiMonths[now.getMonth()]} ${now.getFullYear() + 543}`;
-}
-
-function loadRecentActivities() {
-    const listContainer = document.getElementById('recentList');
-    if (!listContainer) return;
-
-    const bloods = (JSON.parse(localStorage.getItem('bloodRecords')) || []).map(item => ({
+    const bloods = bloodRecords.map(item => ({
         type: 'ความดัน', name: item.inspector || 'ไม่ระบุชื่อ', date: new Date(item.date), badgeClass: 'badge-blood', icon: '🩺'
     }));
-    const healths = (JSON.parse(localStorage.getItem('healthRecords')) || []).map(item => ({
+    const healths = healthRecords.map(item => ({
         type: 'สำรวจสุขภาพ', name: item.name || 'ไม่ระบุชื่อ', date: new Date(item.date), badgeClass: 'badge-health', icon: '📝'
     }));
-    const bedriddens = (JSON.parse(localStorage.getItem('bedriddenRecords')) || []).map(item => ({
+    const bedriddens = bedriddenRecords.map(item => ({
         type: 'ติดเตียง', name: item.name || item.patientName || 'ไม่ระบุชื่อ', date: new Date(item.date), badgeClass: 'badge-bedridden', icon: '🛏️'
     }));
 
     const allActivities = [...bloods, ...healths, ...bedriddens].sort((a, b) => b.date - a.date).slice(0, 5);
+    renderActivities(allActivities);
+}
 
-    if (allActivities.length === 0) {
-        listContainer.innerHTML = '<li class="recent-item" style="color:var(--text-sub); justify-content:center;">ยังไม่มีรายการบันทึกในเดือนนี้</li>';
+function loadFromLocalStorage() {
+    const bloodRecords = JSON.parse(localStorage.getItem('bloodRecords') || '[]');
+    const healthRecords = JSON.parse(localStorage.getItem('healthRecords') || '[]');
+    const bedriddenRecords = JSON.parse(localStorage.getItem('bedriddenRecords') || '[]');
+
+    document.getElementById('statBlood').innerText = bloodRecords.length;
+    document.getElementById('statHealth').innerText = healthRecords.length;
+    document.getElementById('statBedridden').innerText = bedriddenRecords.length;
+
+    renderLocalStorageActivities();
+}
+
+function renderActivities(activities) {
+    const listContainer = document.getElementById('recentList');
+    if (!listContainer) return;
+
+    if (!activities || activities.length === 0) {
+        listContainer.innerHTML = '<li class="recent-item" style="color:var(--text-sub); justify-content:center; padding: 15px 0;">ยังไม่มีรายการบันทึกในเดือนนี้</li>';
         return;
     }
 
-    listContainer.innerHTML = allActivities.map(item => {
-        const timeStr = isNaN(item.date) ? 'เมื่อสักครู่' : item.date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+    listContainer.innerHTML = activities.map(item => {
+        const itemDate = new Date(item.date);
+        const timeStr = isNaN(itemDate) ? 'เมื่อสักครู่' : itemDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
         return `
             <li class="recent-item">
                 <div>
-                    <span>${item.icon} <strong>${item.name}</strong></span>
-                    <span class="badge ${item.badgeClass}">${item.type}</span>
+                    <span>${item.icon || '📌'} <strong>${item.name}</strong></span>
+                    <span class="badge ${item.badgeClass || 'badge-health'}">${item.type}</span>
                 </div>
                 <span class="recent-time">${timeStr}</span>
             </li>
@@ -514,8 +549,7 @@ function resetHistory() {
         localStorage.removeItem('healthRecords');
         localStorage.removeItem('bloodRecords');
         localStorage.removeItem('bedriddenRecords');
-        loadStats();
-        loadRecentActivities();
+        loadStatsAndActivities();
         alert("ล้างประวัติการบันทึกเรียบร้อยแล้ว");
     }
 }
@@ -530,7 +564,6 @@ function closePopup() {
     document.getElementById('officerModal').classList.remove('active');
 }
 
-// ฟังก์ชันตรวจสอบรหัสผ่านและพาไปปลายทางที่เลือก ('sheet' หรือ 'dashboard')
 function verifyAndRedirect(type) {
     const inputVal = document.getElementById('officerAuthKey').value.trim();
     if (officerAuthList.includes(inputVal)) {
