@@ -465,7 +465,7 @@ function loadStatsAndActivities() {
     document.getElementById('currentMonthText').innerText = `เดือน ${thaiMonths[now.getMonth()]} ${now.getFullYear() + 543}`;
 
     // ใส่ URL ของ Google Apps Script ที่คุณใช้งานอยู่
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbzsF0mB4Kq3MyfWtm3vLz33QUEzLRkfzmjJVqlqmBiWRQNbtTy-ygg9uTD6_Bp9g7s/exec"; 
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbwpEVWrlq6VmBgVuV4yfVVC1ZQ6qwHTAkjoaz2xzJRJ-dTRhqteAY422W9IbfvkHtFP/exec"; 
 
     if (webAppUrl) {
         fetch(webAppUrl + "?action=get_stats")
