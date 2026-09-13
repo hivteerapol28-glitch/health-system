@@ -118,8 +118,7 @@
 </div>
 
 <script>
-// ใช้ลิงก์ Web App ตัวเดียวกันกับหน้าติดเตียงของคุณได้เลย
-const webAppUrl = "https://script.google.com/macros/s/AKfycbzsF0mB4Kq3MyfWtm3vLz33QUEzLRkfzmjJVqlqmBiWRQNbtTy-ygg9uTD6_Bp9g7s/exec";
+const webAppUrl = "https://script.google.com/macros/s/AKfycbwpEVWrlq6VmBgVuV4yfVVC1ZQ6qwHTAkjoaz2xzJRJ-dTRhqteAY422W9IbfvkHtFP/exec";
 
 // กำหนดค่าวันที่ปัจจุบันในช่อง input ตอนเปิดหน้าเว็บ
 window.onload = function() {
@@ -127,6 +126,24 @@ window.onload = function() {
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('checkDate').value = now.toISOString().slice(0, 16);
 };
+
+// ฟังก์ชันแปลงรูปแบบวันที่และเวลาให้อ่านเป็นไทย
+function formatThaiDateTime(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    if (isNaN(date)) return dateString;
+
+    const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    };
+    
+    return date.toLocaleString('th-TH', options) + ' น.';
+}
 
 // 🔍 ฟังก์ชันดึงข้อมูลชื่อและประวัติความดันเดิม
 function fetchBloodData() {
@@ -143,12 +160,18 @@ function fetchBloodData() {
             // แสดงชื่อ
             document.getElementById('patientName').value = resData.name || "";
             
-            // แสดงประวัติความดันครั้งก่อน
+            // แสดงประวัติความดันครั้งก่อน (พร้อมแปลงวันที่และดึงผลประเมินมาแสดง)
             if (resData.lastBp) {
-                document.getElementById('prev-date').innerText = resData.lastBp.date || "-";
+                document.getElementById('prev-date').innerText = formatThaiDateTime(resData.lastBp.date);
                 document.getElementById('prev-sys').innerText = resData.lastBp.sys || "-";
                 document.getElementById('prev-dia').innerText = resData.lastBp.dia || "-";
                 document.getElementById('prev-eval').innerText = resData.lastBp.evaluation || "-";
+            } else {
+                // เคลียร์ค่ากรณีไม่พบประวัติความดันเดิมแต่เจอชื่อคนไข้
+                document.getElementById('prev-date').innerText = '-';
+                document.getElementById('prev-sys').innerText = '-';
+                document.getElementById('prev-dia').innerText = '-';
+                document.getElementById('prev-eval').innerText = '-';
             }
             alert('ดึงข้อมูลสำเร็จ!');
         } else {
